@@ -25,25 +25,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bind_param("ssdsi", $productName, $productGroup, $productPrice, $imagePath, $_SESSION['user_id']);
 
                 if ($stmt->execute()) {
-                    $successMessage = "Product uploaded successfully!";
+                    $successMessage = "محصول با موفقیت ثبت گردید!";
                 } else {
-                    $errorMessage = "Failed to upload product to the database.";
+                    $errorMessage = "خطا در آپلود محصول در پایگاه داده";
                 }
                 $stmt->close();
             } else {
-                $errorMessage = "Failed to move uploaded image.";
+                $errorMessage = "خطا در انتقال عکس آپلود شده";
             }
         } else {
-            $errorMessage = "Invalid file type. Only JPG, PNG, and GIF are allowed.";
+            $errorMessage = "خطا در نوع فایل. تنها JPG, PNG, و GIF مجاز هستند";
         }
     } else {
-        $errorMessage = "Error uploading the image. Please try again.";
+        $errorMessage = "خطا در آپلود عکس. لطفا مجدد تلاش کنید";
     }
 }
 ?>
 
 <div class="container">
-    <h2>Upload Product</h2>
+    <h2>ثبت محصول جدید</h2>
 
     <?php if (!empty($errorMessage)): ?>
         <div class="error-message"><?php echo $errorMessage; ?></div>
@@ -52,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="success-message"><?php echo $successMessage; ?></div>
     <?php endif; ?>
         <style>
-            <style>
 .container {
     max-width: 600px;
     margin: 50px auto;
@@ -109,19 +108,17 @@ h2 {
     margin-right: 20px;
     border-radius: 8px;
 }
-</style>
-
         </style>
     <form method="POST" enctype="multipart/form-data">
-        <input type="text" name="product_name" placeholder="Product Name" required>
+        <input type="text" name="product_name" placeholder="نام محصول" required>
         <select name="product_group" required>
-            <option value="electronics">Electronics</option>
-            <option value="clothing">Clothing</option>
-            <option value="books">Books</option>
+            <option value="electronics">الکترونیک</option>
+            <option value="clothing">پوشاک</option>
+            <option value="books">کتاب</option>
         </select>
-        <input type="number" name="product_price" placeholder="Product Price" max="100000" required>
+        <input type="number" name="product_price" placeholder="قیمت محصول" max="100000" required>
         <input type="file" name="product_image" required>
-        <button type="submit">Upload Product</button>
+        <button type="submit">اپلود محصول</button>
     </form>
 </div>
 

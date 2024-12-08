@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['username'] = $user['username'];
         header("Location: index.php");
     } else {
-        $error = "Invalid credentials.";
+        $error = "نام کاربری یا کلمه عبور نادرست است.";
     }
 }
 ?><style>
@@ -88,18 +88,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </style>
 <div class="container">
     <div class="form-container">
-        <h2>Login</h2>
+        <h2>ورود به حساب</h2>
         <?php if (isset($error)): ?>
             <div class="error-message">
                 <?php echo $error; ?>
             </div>
         <?php endif; ?>
         <form method="POST">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
+            <input type="text" name="username" placeholder="نام کاربری" required>
+            <input type="password" name="password" placeholder="کلمه عبور" required>
+            <button type="submit">ورود</button>
         </form>
-        <p>Don't have an account? <a href="register.php">Register here</a></p>
+        <p>حساب ندارید؟ <a href="register.php">اینجا ثبت نام کنید</a></p>
     </div>
 </div>
 

@@ -8,15 +8,46 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+// Add product to cart
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['product_id'])) {
+    if (isset($_SESSION['user_id'])) {
+        $productId = $_POST['product_id'];
+        $userId = $_SESSION['user_id'];
+
+        // Check if the product is already in the cart
+        $stmt = $conn->prepare("SELECT * FROM cart WHERE user_id = ? AND product_id = ?");
+        $stmt->bind_param("ii", $userId, $productId);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows == 0) {
+            // Add product to cart
+            $stmt = $conn->prepare("INSERT INTO cart (user_id, product_id) VALUES (?, ?)");
+            $stmt->bind_param("ii", $userId, $productId);
+            if ($stmt->execute()) {
+                $message = "محصول با موفقیت به سبد خرید شما اضافه شد !";
+            } else {
+                $error = "خطا در اضافه کردن محصول به سبد خرید";
+            }
+        } else {
+            $message = "محصول از قبل در سبد خرید شماست";
+        }
+    } else {
+        header("Location: login.php");
+        exit;
+    }
+}
+
+
 // Delete product from cart
 if (isset($_GET['delete_id'])) {
     $deleteId = $_GET['delete_id'];
     $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_id = ?");
     $stmt->bind_param("ii", $_SESSION['user_id'], $deleteId);
     if ($stmt->execute()) {
-        $message = "Product removed from cart successfully!";
+        $message = "محصول با موفقیت از سبد خرید حذف گردید!";
     } else {
-        $error = "Failed to remove the product.";
+        $error = "خطا در حذف محصول از سبد خرید";
     }
 }
 
@@ -65,7 +96,7 @@ $cartProducts = $result->fetch_all(MYSQLI_ASSOC);
 }
 </style>
 <div class="container">
-    <h2>Selected Products</h2>
+    <h2>سبد خرید : </h2>
     <?php if (isset($message)): ?>
         <div class="success-message"><?php echo $message; ?></div>
     <?php endif; ?>
@@ -79,17 +110,17 @@ $cartProducts = $result->fetch_all(MYSQLI_ASSOC);
                 <img src="<?php echo $product['image']; ?>" alt="Product Image">
                 <div>
                     <h3><?php echo $product['name']; ?></h3>
-                    <p>Price: $<?php echo $product['price']; ?></p>
+                    <p>قیمت : $<?php echo $product['price']; ?></p>
                     <form method="GET" action="">
                         <input type="hidden" name="delete_id" value="<?php echo $product['id']; ?>">
-                        <button type="submit" class="delete-btn">Remove</button>
+                        <button type="submit" class="delete-btn">حذف</button>
                     </form>
                 </div>
             </div>
         <?php endforeach; ?>
-        <button onclick="alert('Payment processed!')">Proceed to Payment</button>
+        <button onclick="alert('پرداخت انجام شد!')">ادامه به پرداخت</button>
     <?php else: ?>
-        <p>No products selected yet.</p>
+        <p>هنوز هیچ محصولی انتخاب نکردید!</p>
     <?php endif; ?>
 </div>
 

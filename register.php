@@ -17,16 +17,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $checkResult = $checkStmt->get_result();
 
     if ($checkResult->num_rows > 0) {
-        $errorMessage = "Username is already taken. Please choose another.";
+        $errorMessage = "نام کاربری قبلا انتخاب شده. لطفا یک مورد دیگه انتخاب کنید";
     } else {
         // Prepare the insert statement
         $stmt = $conn->prepare("INSERT INTO users (name, surname, username, password, gender) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("sssss", $name, $surname, $username, $password, $gender);
 
         if ($stmt->execute()) {
-            $successMessage = "Registration successful. <a href='login.php'>Login here</a>.";
+            $successMessage = "ثبت نام موفقیت آمیز بود. <a href='login.php'>اینجا وارد شوید</a>.";
         } else {
-            $errorMessage = "There was an error during registration. Please try again.";
+            $errorMessage = "خطا هنگام ثبت نام رخ داد. لطفا مجدد تلاش کنید";
         }
 
         // Close the statement
@@ -107,7 +107,7 @@ $conn->close();
 
 <div class="container">
     <form method="POST">
-        <h2>Register</h2>
+        <h2>ثبت نام حساب جدید</h2>
         <?php if (!empty($errorMessage)): ?>
             <div class="error-message">
                 <?php echo $errorMessage; ?>
@@ -120,15 +120,15 @@ $conn->close();
             </div>
         <?php endif; ?>
 
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="text" name="surname" placeholder="Surname" required>
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
+        <input type="text" name="name" placeholder="نام" required>
+        <input type="text" name="surname" placeholder="نام خانوادگی" required>
+        <input type="text" name="username" placeholder="نام کاربری" required>
+        <input type="password" name="password" placeholder="کلمه عبور" required>
         <select name="gender" required>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option value="male">مرد</option>
+            <option value="female">زن</option>
         </select>
-        <button type="submit">Register</button>
+        <button type="submit">ثبت نام</button>
     </form>
 </div>
 <?php include 'includes/footer.php'; ?>

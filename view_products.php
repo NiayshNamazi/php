@@ -12,16 +12,16 @@ $stmt->close();
 ?>
 
 <div class="container">
-    <h2>View Products</h2>
+    <h2>گالری محصولات</h2>
     <?php foreach ($products as $product): ?>
         <div class="product-card">
             <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="Product Image">
             <div>
                 <h3><?php echo htmlspecialchars($product['name']); ?></h3>
-                <p>Price: $<?php echo htmlspecialchars($product['price']); ?></p>
+                <p>قیمت: $<?php echo htmlspecialchars($product['price']); ?></p>
                 <form method="POST" action="selected_products.php">
                     <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['id']); ?>">
-                    <button type="submit">Select</button>
+                    <button type="submit">انتخاب</button>
                 </form>
             </div>
         </div>
