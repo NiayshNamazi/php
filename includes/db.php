@@ -1,13 +1,14 @@
 <?php
-$host = 'localhost';
-$dbname = 'shopping_cart';
-$username = 'root';
-$password = '';
+$servername = "localhost";
+$username = "root"; // Replace with your DB username
+$password = "";     // Replace with your DB password
+$dbname = "my_project_db"; // Replace with your DB name
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+// Create MySQLi connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 ?>
