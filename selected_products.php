@@ -8,40 +8,69 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Add product to cart
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $productId = $_POST['product_id'];
-    $stmt = $conn->prepare("INSERT INTO cart (user_id, product_id) VALUES (?, ?)");
-    $stmt->bind_param("ii", $_SESSION['user_id'], $productId);
-
+// Delete product from cart
+if (isset($_GET['delete_id'])) {
+    $deleteId = $_GET['delete_id'];
+    $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_id = ?");
+    $stmt->bind_param("ii", $_SESSION['user_id'], $deleteId);
     if ($stmt->execute()) {
-        $successMessage = "Product added to cart successfully!";
+        $message = "Product removed from cart successfully!";
     } else {
-        $errorMessage = "Failed to add the product to the cart.";
+        $error = "Failed to remove the product.";
     }
-    $stmt->close();
 }
 
 // Fetch selected products
-$stmt = $conn->prepare("SELECT products.name, products.price, products.image 
-                        FROM cart 
-                        JOIN products ON cart.product_id = products.id 
-                        WHERE cart.user_id = ?");
+$stmt = $conn->prepare("SELECT products.id, products.name, products.price, products.image 
+                       FROM cart 
+                       JOIN products ON cart.product_id = products.id 
+                       WHERE cart.user_id = ?");
 $stmt->bind_param("i", $_SESSION['user_id']);
 $stmt->execute();
 $result = $stmt->get_result();
 $cartProducts = $result->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
 ?>
+<style>/* Delete Button Styling */
+.delete-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+}
 
+.delete-btn:hover {
+    background-color: #e60000;
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+</style>
 <div class="container">
     <h2>Selected Products</h2>
-
-    <?php if (!empty($errorMessage)): ?>
-        <div class="error-message"><?php echo $errorMessage; ?></div>
+    <?php if (isset($message)): ?>
+        <div class="success-message"><?php echo $message; ?></div>
     <?php endif; ?>
-    <?php if (!empty($successMessage)): ?>
-        <div class="success-message"><?php echo $successMessage; ?></div>
+    <?php if (isset($error)): ?>
+        <div class="error-message"><?php echo $error; ?></div>
     <?php endif; ?>
 
     <?php if (count($cartProducts) > 0): ?>
@@ -49,8 +78,12 @@ $stmt->close();
             <div class="product-card">
                 <img src="<?php echo $product['image']; ?>" alt="Product Image">
                 <div>
-                    <h3><?php echo htmlspecialchars($product['name']); ?></h3>
-                    <p>Price: $<?php echo htmlspecialchars($product['price']); ?></p>
+                    <h3><?php echo $product['name']; ?></h3>
+                    <p>Price: $<?php echo $product['price']; ?></p>
+                    <form method="GET" action="">
+                        <input type="hidden" name="delete_id" value="<?php echo $product['id']; ?>">
+                        <button type="submit" class="delete-btn">Remove</button>
+                    </form>
                 </div>
             </div>
         <?php endforeach; ?>
